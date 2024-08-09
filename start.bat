@@ -1,0 +1,1 @@
+start cmd /K "wx_video_help.exe"
