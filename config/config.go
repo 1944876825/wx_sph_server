@@ -13,6 +13,15 @@ type Model struct {
 	Mysql string `yaml:"mysql"`
 	Title string `yaml:"title"`
 	Icon  string `yaml:"icon"`
+	AI    AIConfig `yaml:"ai"`
+}
+
+type AIConfig struct {
+	Enabled       bool   `yaml:"enabled"`
+	APIKey        string `yaml:"api_key"`
+	BaseURL       string `yaml:"base_url"`
+	Model         string `yaml:"model"`
+	DefaultPrompt string `yaml:"default_prompt"`
 }
 
 func Load() {

@@ -1,4 +1,9 @@
-
 port: 5000
 title: 视频号助手
 icon: ./assets/vite.svg
+ai:
+  enabled: false
+  api_key: ""
+  base_url: "https://open.bigmodel.cn/api/paas/v4"
+  model: "glm-5-turbo"
+  default_prompt: "你是一个友好的微信视频号客服助手。请用简洁、亲切的语气回复用户的打招呼消息，引导用户关注或了解更多内容。回复不超过50个字。"

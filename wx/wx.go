@@ -10,6 +10,7 @@ import (
 	"math/rand"
 	"net/http"
 	"time"
+	"wx_video_help/ai"
 	"wx_video_help/db"
 
 	"github.com/go-resty/resty/v2"
@@ -163,12 +164,20 @@ func (u *User) listen() error {
 			toUser = v[0].FromUsername
 		}
 		if isNew {
-			u.send(toUser, k)
+			// 提取用户发的文本消息
+			userText := ""
+			for _, m := range v {
+				if m.TextMsg != nil && m.TextMsg.Content != "" {
+					userText = m.TextMsg.Content
+					break
+				}
+			}
+			u.send(toUser, k, userText)
 		}
 	}
 	return nil
 }
-func (u *User) send(toUser, sessionId string) {
+func (u *User) send(toUser, sessionId, userMsg string) {
 	if u.Msg == nil {
 		return
 	}
@@ -179,6 +188,32 @@ func (u *User) send(toUser, sessionId string) {
 	rng := rand.New(rand.NewSource(time.Now().UnixNano()))
 	randomNumber := rng.Intn(len(msgs))
 	msg := msgs[randomNumber]
+
+	// AI 智能回复模式
+	if msg.UseAI {
+		input := userMsg
+		if input == "" {
+			input = "你好" // 默认打招呼
+		}
+		aiReply, err := ai.GenerateReply(input, msg.SystemPrompt)
+		if err != nil {
+			log.Println("AI回复生成失败，账号:", u.ID, u.NickName, "错误:", err.Error())
+			// 降级为固定文本回复
+			if msg.Text != "" {
+				aiReply = msg.Text
+			} else {
+				return
+			}
+		}
+		_, err = u.sendMsg(toUser, sessionId, aiReply)
+		if err != nil {
+			log.Println("AI消息发送失败，账号:", u.ID, u.NickName, "发送给:", toUser, "会话ID:", sessionId, "错误：", err.Error())
+		}
+		u.Count++
+		return
+	}
+
+	// 固定文本回复模式（原逻辑）
 	if msg.Text != "" {
 		_, err := u.sendMsg(toUser, sessionId, msg.Text)
 		if err != nil {

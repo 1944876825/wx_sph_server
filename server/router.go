@@ -84,4 +84,7 @@ func setWxRouter(r *gin.Engine) {
 	r.POST("/setServer", middlewares.AuthAccount, handles.SetServer)
 	r.POST("/account/list", middlewares.AuthUser, handles.GetAccountList)
 	r.POST("/delAccount", middlewares.AuthAccount, handles.DelAccount)
+
+	r.POST("/aiConfig", middlewares.AuthUser, handles.GetAIConfig)
+	r.POST("/saveAIConfig", middlewares.AuthUser, handles.SaveAIConfig)
 }

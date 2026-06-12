@@ -10,10 +10,12 @@ type SphAccount struct {
 	TimeSleep int    `json:"timeSleep"`
 }
 type SphMsg struct {
-	ID    int64  `json:"id"`
-	AID   int64  `json:"aid" gorm:"column:aid"`
-	Title string `json:"title"`
-	Text  string `json:"text"`
+	ID           int64  `json:"id"`
+	AID          int64  `json:"aid" gorm:"column:aid"`
+	Title        string `json:"title"`
+	Text         string `json:"text"`
+	UseAI        bool   `json:"useAI" gorm:"column:use_ai"`
+	SystemPrompt string `json:"systemPrompt" gorm:"column:system_prompt"`
 	Image
 }
 

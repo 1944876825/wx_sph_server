@@ -36,8 +36,10 @@ func GetMsgInfo(c *gin.Context) {
 
 func SaveMsg(c *gin.Context) {
 	var params struct {
-		Title string `json:"title"`
-		Text  string `json:"text"`
+		Title        string `json:"title"`
+		Text         string `json:"text"`
+		UseAI        bool   `json:"useAI"`
+		SystemPrompt string `json:"systemPrompt"`
 	}
 	if err := c.ShouldBind(&params); err != nil {
 		utils.ResErrWithMsg(c, "参数错误，"+err.Error())
@@ -46,6 +48,8 @@ func SaveMsg(c *gin.Context) {
 	msg := c.MustGet("msg").(*db.SphMsg)
 	msg.Text = params.Text
 	msg.Title = params.Title
+	msg.UseAI = params.UseAI
+	msg.SystemPrompt = params.SystemPrompt
 	if err := db.Conn.Save(&msg).Error; err != nil {
 		utils.ResErrWithMsg(c, "保存失败，"+err.Error())
 		return
